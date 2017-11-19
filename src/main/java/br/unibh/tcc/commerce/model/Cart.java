@@ -21,7 +21,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mysql.fabric.xmlrpc.base.Array;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
