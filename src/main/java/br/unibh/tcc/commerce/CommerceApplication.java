@@ -14,7 +14,7 @@ public class CommerceApplication {
 	
 	@PostConstruct
 	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC-3"));
 	}
 
 	public static void main(String[] args) {
