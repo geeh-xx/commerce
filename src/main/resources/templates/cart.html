@@ -4,38 +4,41 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Home Page</title>
+    <title>Cart</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></link>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <strong>Products</strong>
+            <strong>Cart</strong>
         </div>
         <div class="panel-body">
             <div class="table-responsive">
-                <table class="table table-sm table-striped table-hover table-bordered">
+				<div class="form-group row">
+                    <div class="col-md-1">
+                    	<input type="text" class="form-control input-sm" id="id" th:field="${cart.id}" readOnly="readonly"/>
+                    </div>
+                 </div>
+                <table class="table table-sm table-striped table-hover table-bordered" >
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Product</th>
                             <th>Price</th>
-							<th></th>
-							<th></th>
+							<th> </th>
+							<th> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="product : ${products}">
+                        <tr th:each="product : ${cart.products}">
                             <td th:text="${product.id}"></td>
                             <td th:text="${product.name}"></td>
                             <td th:text="${product.price}"></td>
                             <td></td>
 							<td>
                                 <div class="btn-group pull-right">
-                                    <a class="btn btn-sm btn-primary" th:href="@{/edit/{id}(id=${product.id})}" >Edit</a>
-                                    <a class="delete btn btn-sm btn-danger" th:href="@{/delete/{id}(id=${product.id})}">Exclude</a>
-                                    <a class="delete btn btn-sm btn-danger" th:href="@{/cart/{id}(id=${product.id})}">Add to Cart</a>
+                                    <a class="delete btn btn-sm btn-danger" th:href="@{/cart/item/exclude/{id}(id=${product.id})}">Exclude</a>
                                </div>
                             </td>
                         </tr>
@@ -44,7 +47,9 @@
             </div>
         </div>
         <div class="panel-footer">
-            <a class="btn btn-sm btn-success" th:href="@{/add/}" >Adicionar</a>
+            <a class="btn btn-sm btn-success" th:href="@{/cart/clean}" >Clean Cart</a>
+            <a class="btn btn-sm btn-success" th:href="@{/cart/exclude}" >Exclude Cart</a>
+			<a class="btn btn-sm btn-success" th:href="@{/cart/close}" >Close Cart</a>
         </div>
     </div>
 </body>

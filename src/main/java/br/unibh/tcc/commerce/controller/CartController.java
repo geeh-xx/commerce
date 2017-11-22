@@ -2,14 +2,16 @@ package br.unibh.tcc.commerce.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import br.unibh.tcc.commerce.model.Cart;
 import br.unibh.tcc.commerce.model.Product;
@@ -35,9 +37,15 @@ public class CartController {
 		return cartService.getAll();
 	}
 	
-	@PostMapping("/cart/{idCart}/{idProduct}")
-	public Cart addProductCart(@PathVariable(value = "idCart") Long cartID,@PathVariable(value = "idProduct") Long productId){
-		Cart cart = cartService.findById(cartID);
+	@GetMapping("/cart/{idProduct}")
+	public ModelAndView addProductCart(@PathVariable(value = "idProduct") Long productId,HttpSession session){
+		
+        ModelAndView mv = new ModelAndView("/cart");
+
+		
+		Long cartID = (Long) session.getAttribute("cartId");
+		
+		Cart cart = cartID != null? cartService.findById(cartID) : null;
 		
 		if(cart == null)
 			cart = new Cart();
@@ -50,7 +58,12 @@ public class CartController {
 		}
 		
 		cart.addProduct(product);
-				
-		return 	cartService.save(cart);
+		
+		cart = cartService.save(cart);
+		session.setAttribute("cartId", cart.getId());
+		
+        mv.addObject("cart", cart);
+
+		return 	mv;
 	}
 }

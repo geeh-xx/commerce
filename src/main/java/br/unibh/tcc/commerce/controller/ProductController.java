@@ -1,5 +1,6 @@
 package br.unibh.tcc.commerce.controller;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import br.unibh.tcc.commerce.model.Cart;
 import br.unibh.tcc.commerce.model.Product;
+import br.unibh.tcc.commerce.model.service.CartService;
 import br.unibh.tcc.commerce.model.service.ProductService;
 
 @Controller
@@ -23,6 +26,9 @@ public class ProductController {
 
 	@Autowired
 	ProductService productService;
+	
+	@Autowired
+	CartService cartService;
 	
 	@GetMapping("/")
 	private ModelAndView getProducts(){
@@ -44,6 +50,62 @@ public class ProductController {
          
         return mv;
     }
+	
+	@GetMapping("/cart/{idProduct}")
+	public ModelAndView addProductCart(@PathVariable(value = "idProduct") Long productId,HttpSession session){
+		
+        ModelAndView mv = new ModelAndView("/cart");
+
+		
+		Long cartID = (Long) session.getAttribute("cartId");
+		
+		Cart cart = cartID != null? cartService.findById(cartID) : null;
+		
+		if(cart == null)
+			cart = new Cart();
+	
+		Product product = productService.findById(productId);
+		
+		if (product == null){
+			product = new Product();
+			productService.save(product);
+		}
+		
+		cart.addProduct(product);
+		
+		cart = cartService.save(cart);
+		
+		session.setAttribute("cartId", cart.getId());
+		
+        mv.addObject("cart", cart);
+
+		return 	mv;
+	}
+	
+	@GetMapping("/cart/clean")
+	public ModelAndView addProductCart(HttpSession session){
+		
+        ModelAndView mv = new ModelAndView("/cart");
+
+		Long cartID = (Long) session.getAttribute("cartId");
+		
+		Cart cart = cartID != null? cartService.findById(cartID) : null;
+		
+		if(cart == null){
+			cart = new Cart();
+		}else{
+			cart.getProducts().clear();
+		}
+				
+		cart = cartService.save(cart);
+		
+		session.setAttribute("cartId", cart.getId());
+		
+        mv.addObject("cart", cart);
+
+		return 	mv;
+	}
+	
 	
 	@PostMapping("/product/save")
     public ModelAndView save(@Valid Product product, BindingResult result) {
